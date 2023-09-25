@@ -20,7 +20,6 @@ const fs_1 = require("fs");
 const socket_io_1 = require("socket.io");
 const http_1 = require("http");
 const chatSocket_1 = __importDefault(require("./modules/chat/chatSocket"));
-const customErr_1 = require("./modules/errors/customErr");
 const PORT = process.env.PORT || 4000;
 const baseUrl = "/api";
 // socket config
@@ -45,13 +44,15 @@ app.use((0, cors_1.default)({
     origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
     credentials: true,
 }));
+app.use("/api/uploads", express_1.default.static((0, path_1.join)(__dirname, "..", "uploads")));
 // Routs
 app.use(`${baseUrl}/auth`, authController_1.default);
 app.use(`${baseUrl}/users`, authMiddelware_1.default, userController_1.default);
 // caht service
 app.use(`${baseUrl}/chat`, authMiddelware_1.default, chatController_1.default);
-app.use("*", (_, res, next) => {
-    return next((0, customErr_1.CreateApiErr)("Page Not Found"));
+app.use(express_1.default.static((0, path_1.join)(__dirname, "..", "build")));
+app.use("*", (_, res) => {
+    res.sendFile((0, path_1.join)(__dirname, "..", "build", "index.html"));
 });
 // Error handler
 app.use(ErrorMiddelware_1.default);
