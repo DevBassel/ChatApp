@@ -40,7 +40,7 @@ export const register = asyncHandler(
 
     if (!user) next(CreateApiErr("try again later"));
 
-    // sendCode(code, email, res);
+    sendCode(code, email, res);
 
     res.cookie("auth", genToken(user?._id), {
       // cookie is valid 30 days
