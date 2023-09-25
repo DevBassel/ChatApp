@@ -36,7 +36,7 @@ export default function Chat({ reciver, sender }) {
       }
     };
     getFirend();
-  }, [API, dispatch, reciver, sender, user?._id]);
+  }, [dispatch, reciver, sender, user?._id]);
 
   return (
     <>
