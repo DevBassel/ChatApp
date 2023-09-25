@@ -4,7 +4,7 @@ let users = [];
 function chatSocket(io) {
     io.on("connection", (socket) => {
         socket.on("addUser", (userId) => {
-            userId && addUser({ userId, socketId: socket.id });
+            addUser({ userId, socketId: socket.id });
             io.emit("online", users);
             // console.log("add user", { users });
         });

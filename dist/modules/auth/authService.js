@@ -36,12 +36,7 @@ exports.register = (0, express_async_handler_1.default)(async (req, res, next) =
     if (!user)
         next((0, customErr_1.CreateApiErr)("try again later"));
     // sendCode(code, email, res);
-    res.cookie("auth", (0, exports.genToken)(user?._id), {
-        // cookie is valid 30 days
-        maxAge,
-        httpOnly: true,
-        secure: true,
-    });
+    setAuthCookies(res, "auth", (0, exports.genToken)(user?._id));
     res.json({
         id: user._id,
         name: user.name,
@@ -95,12 +90,7 @@ exports.login = (0, express_async_handler_1.default)(async (req, res, next) => {
         console.log(code);
     }
     // set cookie
-    res.cookie("auth", (0, exports.genToken)(user?._id), {
-        // cookie is valid 30 days
-        maxAge,
-        httpOnly: true,
-        secure: true,
-    });
+    setAuthCookies(res, "auth", (0, exports.genToken)(user?._id));
     res.json({
         id: user._id,
         name: user.name,
@@ -129,11 +119,17 @@ const sendCode = (code, email, res) => {
         subject: "Verify Your Email ^_^ ",
         html,
     });
-    res.cookie("email", email, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 2,
-    });
+    setAuthCookies(res, "email", email);
 };
 // create code 6 nums
 const genCode = () => Math.floor(Math.random() * 900000) + 100000;
+const setAuthCookies = (res, name, data) => {
+    res.cookie(name, data, {
+        // cookie is valid 30 days
+        maxAge,
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+    });
+};
 //# sourceMappingURL=authService.js.map
