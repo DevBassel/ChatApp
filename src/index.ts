@@ -27,11 +27,7 @@ const baseUrl: string = "/api";
 // socket config
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
-  },
-});
+const io = new Server(server);
 chatSocket(io);
 
 const accessLogStream = createWriteStream(join(__dirname, "../access.log"), {
@@ -44,12 +40,12 @@ app.use(morgan("combined", { stream: accessLogStream }));
 app.use(express.json({ limit: "20kb" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
-app.use(
-  cors({
-    origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
+//     credentials: true,
+//   })
+// );
 app.use("/api/uploads", express.static(join(__dirname, "..", "uploads")));
 
 // Routs

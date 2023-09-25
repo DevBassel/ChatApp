@@ -13,7 +13,6 @@ const userController_1 = __importDefault(require("./modules/users/userController
 const chatController_1 = __importDefault(require("./modules/chat/chatController"));
 const authMiddelware_1 = __importDefault(require("./modules/auth/authMiddelware"));
 const ErrorMiddelware_1 = __importDefault(require("./modules/errors/ErrorMiddelware"));
-const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const path_1 = require("path");
 const fs_1 = require("fs");
@@ -25,11 +24,7 @@ const baseUrl = "/api";
 // socket config
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
-const io = new socket_io_1.Server(server, {
-    cors: {
-        origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
-    },
-});
+const io = new socket_io_1.Server(server);
 (0, chatSocket_1.default)(io);
 const accessLogStream = (0, fs_1.createWriteStream)((0, path_1.join)(__dirname, "../access.log"), {
     flags: "a",
@@ -40,10 +35,12 @@ app.use((0, morgan_1.default)("combined", { stream: accessLogStream }));
 app.use(express_1.default.json({ limit: "20kb" }));
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.urlencoded({ extended: false }));
-app.use((0, cors_1.default)({
-    origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
-    credentials: true,
-}));
+// app.use(
+//   cors({
+//     origin: [String(process.env.CLIENT_URL), "http://localhost:3000"],
+//     credentials: true,
+//   })
+// );
 app.use("/api/uploads", express_1.default.static((0, path_1.join)(__dirname, "..", "uploads")));
 // Routs
 app.use(`${baseUrl}/auth`, authController_1.default);

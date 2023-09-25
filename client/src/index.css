@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#code {
+  letter-spacing: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+::-webkit-scrollbar {
+  background: transparent;
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #0ea5e9;
+  border-radius: 6px;
+}
+
+.popup.active {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: popup 0.25s both cubic-bezier(1, 0.02, 1, 1.17);
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
