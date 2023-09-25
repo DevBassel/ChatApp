@@ -47,9 +47,9 @@ app.use(`${baseUrl}/auth`, authController_1.default);
 app.use(`${baseUrl}/users`, authMiddelware_1.default, userController_1.default);
 // caht service
 app.use(`${baseUrl}/chat`, authMiddelware_1.default, chatController_1.default);
-app.use(express_1.default.static((0, path_1.join)(__dirname, "..", "build")));
+app.use(express_1.default.static((0, path_1.join)(__dirname, "../client", "build")));
 app.use("*", (_, res) => {
-    res.sendFile((0, path_1.join)(__dirname, "..", "build", "index.html"));
+    res.sendFile((0, path_1.join)(__dirname, "../client", "build", "index.html"));
 });
 // Error handler
 app.use(ErrorMiddelware_1.default);

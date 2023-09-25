@@ -55,9 +55,9 @@ app.use(`${baseUrl}/users`, auth, userRouter);
 // caht service
 app.use(`${baseUrl}/chat`, auth, chatRouter);
 
-app.use(express.static(join(__dirname, "..", "build")));
+app.use(express.static(join(__dirname, "../client", "build")));
 app.use("*", (_, res) => {
-  res.sendFile(join(__dirname, "..", "build", "index.html"));
+  res.sendFile(join(__dirname, "../client", "build", "index.html"));
 });
 
 // Error handler
