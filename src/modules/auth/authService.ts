@@ -141,7 +141,7 @@ export const login = asyncHandler(
 );
 
 // /api/v1/auth/logout    |   POST    |   public
-export const logout = asyncHandler(async (req: customReq, res: Response) => {
+export const logout = asyncHandler(async (_, res: Response) => {
   res.clearCookie("auth");
   res.json({ msg: "loged out" });
 });

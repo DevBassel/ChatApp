@@ -3,22 +3,30 @@ import Firend from "./Firend";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SocketContext } from "../context/SocketContext";
+import { logOut } from "../featchers/auth/authActions";
 
 export default function FirendsContainer() {
-  const API ="/api";
+  const API = "/api";
   const [firends, setFirends] = useState([]);
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
   const { socket } = useContext(SocketContext);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      const res = await axios.get(`${API}/users`, { withCredentials: true });
-      setFirends(res.data);
+      try {
+        const res = await axios.get(`${API}/users`, { withCredentials: true });
+        setFirends(res.data);
+      } catch (error) {
+        if (error.response.data.error === "Unauthorized") {
+          dispatch(logOut());
+        }
+      }
     })();
-  }, [API]);
+  }, [API, dispatch]);
 
   const startChat = ({ name, _id }) => {
     Swal.fire({

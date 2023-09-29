@@ -123,12 +123,12 @@ export default function Messenger() {
     }
   };
   return (
-    <>
-      <div className="container bg-gradient-to-r from-sky-500 to-indigo-500  flex h-screen flex-col justify-between items-center bg-gray-300  p-2 m-auto rounded-md">
+    <section className="bg-gradient-to-tr from-sky-500 to-indigo-500">
+      <div className="container   flex h-screen flex-col justify-between items-center m-auto rounded-md">
         {/* firend info container */}
         <div
-          className="flex relative
-         bg-black bg-opacity-50 text-white p-2 w-2/3  lg:w-1/3 mx-auto rounded-3xl items-center"
+          className="flex fixed
+         bg-black bg-opacity-50 text-white w-2/3  lg:w-1/3 mx-auto rounded-3xl items-center"
         >
           {/* user image  */}
           <div className="relative h-full  overflow-hidden">
@@ -148,7 +148,7 @@ export default function Messenger() {
           </div>
 
           {/* user name */}
-          <h1 className="text-2xl absolute left-1/2 -translate-x-1/2  font-bold ">
+          <h1 className="text-xl absolute left-1/2 -translate-x-1/2  font-bold ">
             {firendData.name}
           </h1>
 
@@ -190,6 +190,6 @@ export default function Messenger() {
           />
         </form>
       </div>
-    </>
+    </section>
   );
 }

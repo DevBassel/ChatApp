@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { errReset } from "../featchers/error/errorSlice";
 import { useEffect } from "react";
+import { authReset } from "../featchers/auth/authSlice";
+import { chatReset } from "../featchers/chat/chatSlice";
 
 export default function Popup(props) {
   const { msg } = useSelector((s) => s.error);
@@ -9,6 +11,8 @@ export default function Popup(props) {
     if (msg) {
       setTimeout(() => {
         dispatch(errReset());
+        dispatch(authReset());
+        dispatch(chatReset());
       }, 2000);
     }
   }, [dispatch, msg]);

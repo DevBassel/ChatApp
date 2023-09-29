@@ -11,29 +11,29 @@ import {
   BiSolidUser,
   BiUser,
 } from "react-icons/bi";
+import axios from "axios";
 
 export default function Navbar() {
   const { socket } = useContext(SocketContext);
 
   const [show, setshow] = useState(false);
-  const liStyle =
-    "block px-4 py-2 text-lg text flex items-center font-bold   text-gray-700 hover:bg-blue-600 dark: dark:text-gray-200 dark:hover:text-white";
   const showMenu = () => setshow(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, error } = useSelector((s) => s.auth);
-
-  const out = () => {
-    user && socket.disconnect();
-    dispatch(logOut());
-  };
+  const { user } = useSelector((s) => s.auth);
+  const [checkImg, setcheckImg] = useState(404);
 
   useEffect(() => {
-    if (error && error.includes("Unauthorized")) dispatch(logOut());
     dispatch(getMe());
-    if (user) socket?.connect();
-  }, [dispatch, error, socket]);
+    axios.get(user?.avatar).then((res) => setcheckImg(res.status));
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    socket?.connect();
+    socket?.emit("addUser", user?._id);
+  }, [socket, user?._id]);
   const navList = [
     {
       name: "Home",
@@ -50,7 +50,11 @@ export default function Navbar() {
       name: "log out",
       icone: <BiLogOut />,
       to: "/",
-      fun: () => out(),
+      fun: () => {
+        socket.disconnect();
+        console.log(socket);
+        dispatch(logOut());
+      },
     },
   ];
 
@@ -71,7 +75,7 @@ export default function Navbar() {
               <img
                 className="w-12 h-12 rounded-full object-cover"
                 onMouseOut={() => setshow(false)}
-                src={user?.avatar || avatar}
+                src={checkImg === 200 ? user.avatar : avatar}
                 alt="userPhoto"
               />
               <div
@@ -99,7 +103,11 @@ export default function Navbar() {
                 </div>
                 <ul className="py-2 capitalize">
                   {navList.map((item, i) => (
-                    <li key={i} onClick={item.fun} className={liStyle}>
+                    <li
+                      key={i}
+                      onClick={item.fun}
+                      className="px-4 py-2 text-lg text flex items-center font-bold   text-gray-700 hover:bg-blue-600 dark: dark:text-gray-200 dark:hover:text-white"
+                    >
                       <span className="me-5">{item.icone}</span> {item.name}
                     </li>
                   ))}

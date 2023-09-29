@@ -1,22 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BiShow, BiSolidHide } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../featchers/auth/authActions";
 import { addError } from "../featchers/error/errorSlice";
-import { authReset } from "../featchers/auth/authSlice";
-import { chatReset } from "../featchers/chat/chatSlice";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { error, user } = useSelector((s) => s.auth);
-
-  useEffect(() => {
-    dispatch(chatReset());
-    dispatch(authReset());
-  }, [dispatch]);
 
   const [userData, setData] = useState({
     email: "",
@@ -54,12 +47,8 @@ export default function Login() {
     ) {
       // login logic
       dispatch(login(userData));
-
-      console.log("form is valid");
     } else {
       dispatch(addError("email or password not valid"));
-      console.log("email or password not valid");
-      dispatch(authReset());
     }
   }
 

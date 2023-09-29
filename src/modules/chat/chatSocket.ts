@@ -10,7 +10,7 @@ export default function chatSocket(io: Server) {
     socket.on("addUser", (userId) => {
       userId && addUser({ userId, socketId: socket.id });
       io.emit("online", users);
-      // console.log("add user", { users });
+      console.log("add user", { users });
     });
 
     socket.on("msg", (data) => {
