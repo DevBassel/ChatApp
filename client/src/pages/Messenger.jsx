@@ -157,7 +157,7 @@ export default function Messenger() {
         </div>
 
         {/* Masseages container */}
-        <div className=" overflow-y-scroll overflow-x-hidden shadow-cyan-300 shadow-inner     bg-black bg-opacity-60 rounded-md my-3 h-full lg:w-3/4 w-full">
+        <div className=" msgsContainer overflow-y-scroll  overflow-x-hidden shadow-cyan-300 shadow-inner     bg-black bg-opacity-60 rounded-md my-3  lg:w-3/4 w-full">
           {msgs &&
             msgs.map((msg, i) => (
               <div key={msg._id || i}>
@@ -170,7 +170,7 @@ export default function Messenger() {
         {/* form container */}
         <form
           onSubmit={sendMsg}
-          className="flex  lg:w-3/4 w-full justify-between"
+          className="flex fixed bottom-1  lg:w-3/4 w-full justify-between"
         >
           <input
             type="text"

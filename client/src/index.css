@@ -22,7 +22,9 @@
   transform: translate(-50%, -50%);
   animation: popup 0.25s both cubic-bezier(1, 0.02, 1, 1.17);
 }
-
+.msgsContainer {
+  height: calc(100vh - 70px);
+}
 @keyframes popup {
   from {
     transform: scale(0);

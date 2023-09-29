@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import { getMyChats } from "../featchers/chat/chatActions";
 import FirendsContainer from "../components/FirendsContainer";
 import ChatsContainer from "../components/ChatsContainer";
+import { addError } from "../featchers/error/errorSlice";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -13,10 +14,10 @@ export default function Home() {
   const { chats } = useSelector((s) => s.chat);
 
   useEffect(() => {
-    if (error) console.log(error);
+    if (error) dispatch(addError(error));
 
     if (!user) navigate("/login");
-  }, [error, navigate, user]);
+  }, [dispatch, error, navigate, user]);
 
   useEffect(() => {
     dispatch(getMyChats());
