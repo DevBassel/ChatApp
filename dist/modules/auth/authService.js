@@ -110,7 +110,7 @@ exports.login = (0, express_async_handler_1.default)(async (req, res, next) => {
     });
 });
 // /api/v1/auth/logout    |   POST    |   public
-exports.logout = (0, express_async_handler_1.default)(async (req, res) => {
+exports.logout = (0, express_async_handler_1.default)(async (_, res) => {
     res.clearCookie("auth");
     res.json({ msg: "loged out" });
 });

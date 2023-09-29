@@ -11,7 +11,7 @@ export default function SocketProvider({ children }) {
 
   useEffect(() => {
     if (user) {
-      const newSocket = io("http://localhost:4000");
+      const newSocket = io();
 
       setSocket(newSocket);
 

@@ -13,6 +13,7 @@ const userController_1 = __importDefault(require("./modules/users/userController
 const chatController_1 = __importDefault(require("./modules/chat/chatController"));
 const authMiddelware_1 = __importDefault(require("./modules/auth/authMiddelware"));
 const ErrorMiddelware_1 = __importDefault(require("./modules/errors/ErrorMiddelware"));
+//import cors from "cors";
 const morgan_1 = __importDefault(require("morgan"));
 const path_1 = require("path");
 const fs_1 = require("fs");
@@ -24,7 +25,11 @@ const baseUrl = "/api";
 // socket config
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
-const io = new socket_io_1.Server(server);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+    },
+});
 (0, chatSocket_1.default)(io);
 const accessLogStream = (0, fs_1.createWriteStream)((0, path_1.join)(__dirname, "../access.log"), {
     flags: "a",
