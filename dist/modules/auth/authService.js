@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.genToken = exports.logout = exports.login = exports.verifyEmail = exports.register = void 0;
+exports.genToken = exports.logout = exports.login = exports.reSendValidEmail = exports.verifyEmail = exports.register = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const User_1 = __importDefault(require("../models/User"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -13,11 +13,6 @@ const sendEmail_service_1 = __importDefault(require("../emails/sendEmail.service
 const fs_1 = require("fs");
 const path_1 = require("path");
 const cloudinary_1 = require("cloudinary");
-cloudinary_1.v2.config({
-    cloud_name: process.env.cloud_name,
-    api_key: process.env.api_key,
-    api_secret: process.env.api_secret,
-});
 const maxAge = 1000 * 60 * 60 * 24 * 30; // 30 day
 // /api/v1/register    |   POST    |   public
 exports.register = (0, express_async_handler_1.default)(async (req, res, next) => {
@@ -73,6 +68,19 @@ exports.verifyEmail = (0, express_async_handler_1.default)(async (req, res, next
         email: user.email,
         verify: user.verify,
     });
+});
+exports.reSendValidEmail = (0, express_async_handler_1.default)(async (req, res, next) => {
+    const { id } = req.body;
+    const code = genCode();
+    const user = await User_1.default.findByIdAndUpdate(id, {
+        $set: { code },
+    });
+    if (!user)
+        return next((0, customErr_1.CreateApiErr)("User Not Found", 404));
+    if (user?.verify)
+        return next((0, customErr_1.CreateApiErr)("User Email Is Verify", 404));
+    sendCode(code, String(user?.email), res);
+    res.json({ success: true });
 });
 // /api/v1/login    |   POST    |   public
 exports.login = (0, express_async_handler_1.default)(async (req, res, next) => {
@@ -131,7 +139,7 @@ const sendCode = (code, email, res) => {
     });
     res.cookie("email", email, {
         httpOnly: true,
-        maxAge: 1000 * 60 * 2,
+        maxAge: 1000 * 60 * 10,
     });
 };
 // create code 6 nums

@@ -11,6 +11,7 @@ const upload_1 = __importDefault(require("../middlewares/upload"));
 const router = (0, express_1.Router)();
 router.post("/register", upload_1.default.single("avatar"), authService_1.register);
 router.post("/verify", authService_1.verifyEmail);
+router.post("/reSendCode", authService_1.reSendValidEmail);
 router.post("/login", authService_1.login);
 router.post("/logout", authService_1.logout);
 router.post("/forget-password", passwordService_1.forgetPassword);

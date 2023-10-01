@@ -20,8 +20,15 @@ const fs_1 = require("fs");
 const socket_io_1 = require("socket.io");
 const http_1 = require("http");
 const chatSocket_1 = __importDefault(require("./modules/chat/chatSocket"));
+const cloudinary_1 = require("cloudinary");
 const PORT = process.env.PORT || 4000;
 const baseUrl = "/api";
+// config cloude
+cloudinary_1.v2.config({
+    cloud_name: process.env.cloud_name,
+    api_key: process.env.api_key,
+    api_secret: process.env.api_secret,
+});
 // socket config
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
@@ -50,7 +57,7 @@ app.use("/api/uploads", express_1.default.static((0, path_1.join)(__dirname, "..
 // Routs
 app.use(`${baseUrl}/auth`, authController_1.default);
 app.use(`${baseUrl}/users`, authMiddelware_1.default, userController_1.default);
-// caht service
+// chat service
 app.use(`${baseUrl}/chat`, authMiddelware_1.default, chatController_1.default);
 app.use(express_1.default.static((0, path_1.join)(__dirname, "../client", "build")));
 app.use("*", (_, res) => {

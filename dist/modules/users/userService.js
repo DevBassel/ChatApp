@@ -8,7 +8,8 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const User_1 = __importDefault(require("../models/User"));
 const customErr_1 = require("../errors/customErr");
 const mongoose_1 = require("mongoose");
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const cloudinary_1 = require("cloudinary");
+const bcrypt_1 = require("bcrypt");
 // /api/ profile    |   GET    |   private
 exports.profile = (0, express_async_handler_1.default)(async (req, res) => {
     res.json(req.user);
@@ -44,15 +45,22 @@ exports.deleteUser = (0, express_async_handler_1.default)(async (req, res, next)
 });
 // /api/ users/:id    |   PUT    |   private
 exports.updateUser = (0, express_async_handler_1.default)(async (req, res, next) => {
-    const { id } = req.params;
-    const { name, email, password, newPassword } = req.body;
-    if (String(id) !== String(req.user._id))
+    const { _id } = req.user;
+    const { name, password } = req.body;
+    if (String(_id) !== String(req.user._id))
         return next((0, customErr_1.CreateApiErr)("don't have an access", 401));
-    const user = await User_1.default.findById(id);
-    if (!(await bcrypt_1.default.compare(password, String(user?.password))))
-        return next((0, customErr_1.CreateApiErr)("wrong password", 400));
-    const hash = await bcrypt_1.default.hash(newPassword, await bcrypt_1.default.genSalt(10));
-    const update = await User_1.default.updateOne({ _id: id }, { $set: { name, email, password: hash } });
-    res.json(update);
+    const user = await User_1.default.findById(_id);
+    if (!user)
+        return next((0, customErr_1.CreateApiErr)("User Not Found", 404));
+    if (!(0, bcrypt_1.compareSync)(password, String(user.password)))
+        return next((0, customErr_1.CreateApiErr)("Unauthorized", 401));
+    if (req.file) {
+        const img = await cloudinary_1.v2.uploader.upload(req.file.path, {
+            quality: 10,
+        });
+        await User_1.default.updateOne({ _id }, { $set: { name, avatar: img.url } });
+    }
+    await User_1.default.updateOne({ _id }, { $set: { name } });
+    res.json({ success: true });
 });
 //# sourceMappingURL=userService.js.map
