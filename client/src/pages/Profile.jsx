@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   BiSolidBadgeCheck,
   BiSolidUser,

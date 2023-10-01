@@ -7,8 +7,7 @@ import Popup from "./components/Popup";
 import Profile from "./pages/Profile";
 import Messenger from "./pages/Messenger";
 import NotFound from "./pages/NotFound";
-import ReSetPass from "./pages/ReSetPass";
-
+import PassReset from "./pages/PassReset";
 function App() {
   return (
     <div className="App">
@@ -19,7 +18,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/reset-password/:token" element={<ReSetPass />} />
+        <Route path="/reset-password/:token" element={<PassReset />} />
         <Route path="/verify" element={<Verify />} />
 
         <Route path="*" element={<NotFound />} />
