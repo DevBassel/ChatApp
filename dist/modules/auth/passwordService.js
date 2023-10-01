@@ -16,10 +16,9 @@ const path_1 = require("path");
 // /api/auth/forgetPassword    |   POST    |   public
 exports.forgetPassword = (0, express_async_handler_1.default)(async (req, res, next) => {
     const { email } = req.body;
-    console.log(email);
     const user = await User_1.default.findOne({ email });
     if (!user)
-        next((0, customErr_1.CreateApiErr)("user not found", 404));
+        return next((0, customErr_1.CreateApiErr)("user not found", 404));
     const token = (0, authService_1.genToken)(user?._id, "5m");
     const link = `${process.env.HOST}/reset-password/${token}`;
     // sent link to user email

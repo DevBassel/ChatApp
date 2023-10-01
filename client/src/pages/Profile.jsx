@@ -10,15 +10,10 @@ import {
 } from "react-icons/bi";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import UpdateProfile from "../components/UpdateProfile";
-import { useRef, useState } from "react";
-import { updateUserData } from "../featchers/user/userActions";
-
-// import RESetPass from "./RESetPass";
-
+import { useState } from "react";
 export default function Profile() {
   const { user } = useSelector((s) => s.auth);
   const [updateForm, setUpdateForm] = useState(false);
-
 
   return (
     user && (

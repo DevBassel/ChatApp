@@ -4,15 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { addError } from "../featchers/error/errorSlice";
 import { useNavigate } from "react-router-dom";
 import OnlineStatus from "./OnlineStatus";
-import avatar from "../images/avatar.svg";
-import checkIfImage from "../helper/checkIfImg";
 
 export default function Chat({ reciver, sender, activeUsers }) {
   const [firendData, setFirendData] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const [checkImg, setcheckImg] = useState(false);
 
   const online =
     activeUsers.find((user) => user.userId === firendData._id) || false;

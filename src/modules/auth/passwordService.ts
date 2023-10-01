@@ -14,10 +14,9 @@ import { join } from "path";
 export const forgetPassword = asyncHandler(
   async (req: customReq, res: Response, next: NextFunction) => {
     const { email } = req.body;
-    console.log(email);
     const user = await User.findOne({ email });
 
-    if (!user) next(CreateApiErr("user not found", 404));
+    if (!user) return next(CreateApiErr("user not found", 404));
 
     const token = genToken(user?._id, "5m");
 

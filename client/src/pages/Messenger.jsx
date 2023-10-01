@@ -2,13 +2,11 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Msg from "../components/Msg";
-import avatar from "../images/avatar.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addError } from "../featchers/error/errorSlice";
 import Loading from "../components/Loading";
 import socket from "../socket";
 import OnlineStatus from "../components/OnlineStatus";
-import checkIfImage from "../helper/checkIfImg";
 
 export default function Messenger() {
   const { chatId } = useParams();
@@ -22,7 +20,6 @@ export default function Messenger() {
   const { user } = useSelector((s) => s.auth);
   const [typeing, setTyping] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [checkImg, setcheckImg] = useState(false);
 
   const [activeUsers, setActiveUsers] = useState([]);
   const onlins =

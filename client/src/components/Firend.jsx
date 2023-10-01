@@ -1,16 +1,8 @@
-import React, { useEffect, useState } from "react";
-import avatarXD from "../images/avatar.svg";
 import OnlineStatus from "./OnlineStatus";
-import checkIfImage from "../helper/checkIfImg";
 
 export default function Firend({ name, avatar, _id, onlines }) {
-  const [checkImg, setcheckImg] = useState(false);
 
   const activeUsers = onlines.find((user) => user.userId === _id) || false;
-
-  // useEffect(() => {
-  //   checkIfImage(avatar, setcheckImg);
-  // }, [avatar]);
 
   return (
     <>

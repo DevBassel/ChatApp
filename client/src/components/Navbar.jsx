@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { getMe, logOut } from "../featchers/auth/authActions";
-import avatar from "../images/avatar.svg";
 import {
   BiHomeCircle,
   BiLogOut,

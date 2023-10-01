@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import { BiShow, BiSolidHide } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { getMe, register } from "../featchers/auth/authActions";
+import { register } from "../featchers/auth/authActions";
 import { authReset } from "../featchers/auth/authSlice";
 import { addError } from "../featchers/error/errorSlice";
 import Loading from "../components/Loading";
@@ -21,7 +21,7 @@ export default function Register() {
   const [showPass, setShowPass] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, user, success, loading } = useSelector((s) => s.auth);
+  const { error, user, loading } = useSelector((s) => s.auth);
   // regex pattern
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordPattern =
