@@ -7,6 +7,7 @@ let users: User[] = [];
 
 export default function chatSocket(io: Server) {
   io.on("connection", (socket) => {
+    console.log("connect");
     socket.on("addUser", (userId) => {
       userId && addUser({ userId, socketId: socket.id });
       io.emit("online", users);
@@ -15,10 +16,10 @@ export default function chatSocket(io: Server) {
 
     socket.on("msg", (data) => {
       const user = getUser(data.to)?.socketId;
-      console.log(data);
+      // console.log(data);
       io.to(String(user)).emit("msg", data);
 
-      console.log({ users, user, data });
+      // console.log({ users, user, data });
     });
 
     socket.on("typeing", (data) => {
@@ -41,6 +42,7 @@ export default function chatSocket(io: Server) {
       removeUser(socket.id);
       io.emit("online", users);
     });
+    console.log("disconnect");
   });
 }
 

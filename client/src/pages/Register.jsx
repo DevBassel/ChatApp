@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import { BiShow, BiSolidHide } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../featchers/auth/authActions";
+import { getMe, register } from "../featchers/auth/authActions";
 import { authReset } from "../featchers/auth/authSlice";
 import { addError } from "../featchers/error/errorSlice";
+import Loading from "../components/Loading";
 
 export default function Register() {
   const [avatar, setAvatar] = useState({});
@@ -20,7 +21,7 @@ export default function Register() {
   const [showPass, setShowPass] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, user } = useSelector((s) => s.auth);
+  const { error, user, success, loading } = useSelector((s) => s.auth);
   // regex pattern
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordPattern =
@@ -30,25 +31,25 @@ export default function Register() {
   const getData = ({ target }) =>
     setData({ ...userData, [target.name]: target.value });
 
-  if (error) dispatch(addError(error));
-
-  if (error) {
-    if (error.includes("name_1 dup")) dispatch(addError("userName is used"));
-    if (error.includes("email_1 dup")) dispatch(addError("email is used"));
-  }
-
   useEffect(() => {
-    if (user) {
-      if (!user.verify) navigate("/verify");
-      else navigate("/");
+    if (success) {
+      navigate("/verify");
+    }
+    if (error) {
+      if (error.includes("name_1 dup")) dispatch(addError("userName is used"));
+      if (error.includes("email_1 dup")) dispatch(addError("email is used"));
     }
 
     return () => dispatch(authReset());
-  }, [dispatch, navigate, user]);
+  }, [dispatch, error, navigate, success, user]);
 
   const fileChange = (e) => {
     setAvatar(e.target.files[0]);
   };
+
+  if (success) {
+    dispatch(getMe());
+  }
 
   // submit form
   function submit(event) {
@@ -67,15 +68,15 @@ export default function Register() {
         formData.append("password", userData.password);
 
         dispatch(register(formData));
-        navigate("/verify");
       } else dispatch(addError("Passwords do not match."));
-      console.log("form is valid", userData);
     } else {
       dispatch(addError("form not valid"));
     }
   }
+
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      {loading ? <Loading /> : ""}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 capitalize text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           create a new account
@@ -101,7 +102,7 @@ export default function Register() {
             type="file"
             label="avatar"
             id="avatar"
-            accept=".jpg, .jpeg, .png"
+            accept="image/*"
             fun={fileChange}
             cls="file:bg-violet-50 file:text-violet-500 hover:file:bg-violet-100 file:rounded-lg file:rounded-tr-none file:rounded-br-none file:px-4 file:py-2 file:mr-4 file:border-none hover:cursor-pointer border rounded-lg text-gray-400"
           />

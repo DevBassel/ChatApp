@@ -5,7 +5,9 @@ import User from "../models/User";
 import { userDto } from "./dto/userDto";
 import { CreateApiErr } from "../errors/customErr";
 import { isValidObjectId } from "mongoose";
-import bcrypt from "bcrypt";
+import { v2 as cloudinary } from "cloudinary";
+import { compareSync } from "bcrypt";
+
 // /api/ profile    |   GET    |   private
 export const profile = asyncHandler(async (req: customReq, res: Response) => {
   res.json(req.user);
@@ -56,24 +58,26 @@ export const deleteUser = asyncHandler(
 // /api/ users/:id    |   PUT    |   private
 export const updateUser = asyncHandler(
   async (req: customReq, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const { name, email, password, newPassword } = req.body;
-
-    if (String(id) !== String(req.user._id))
+    const { _id } = req.user;
+    const { name, password } = req.body;
+    if (String(_id) !== String(req.user._id))
       return next(CreateApiErr("don't have an access", 401));
 
-    const user = await User.findById(id);
+    const user = await User.findById(_id);
 
-    if (!(await bcrypt.compare(password, String(user?.password))))
-      return next(CreateApiErr("wrong password", 400));
+    if (!user) return next(CreateApiErr("User Not Found", 404));
 
-    const hash = await bcrypt.hash(newPassword, await bcrypt.genSalt(10));
+    if (!compareSync(password, String(user.password)))
+      return next(CreateApiErr("Unauthorized", 401));
+    if (req.file) {
+      const img = await cloudinary.uploader.upload(req.file.path, {
+        quality: 10,
+      });
+      await User.updateOne({ _id }, { $set: { name, avatar: img.url } });
+    }
 
-    const update = await User.updateOne(
-      { _id: id },
-      { $set: { name, email, password: hash } }
-    );
+    await User.updateOne({ _id }, { $set: { name } });
 
-    res.json(update);
+    res.json({ success: true });
   }
 );

@@ -1,7 +1,14 @@
 import { Router } from "express";
-import { login, register, verifyEmail, logout } from "./authService";
+import {
+  login,
+  register,
+  verifyEmail,
+  logout,
+  reSendValidEmail,
+} from "./authService";
 import { forgetPassword, passwordReset, resetPage } from "./passwordService";
 import upload from "../middlewares/upload";
+import authMiddelware from "./authMiddelware";
 
 // /api/v1/auth
 
@@ -10,6 +17,8 @@ const router = Router();
 router.post("/register", upload.single("avatar"), register);
 
 router.post("/verify", verifyEmail);
+
+router.post("/reSendCode", reSendValidEmail);
 
 router.post("/login", login);
 

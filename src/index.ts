@@ -20,9 +20,17 @@ import { createWriteStream } from "fs";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import chatSocket from "./modules/chat/chatSocket";
+import { v2 as cloudinary } from "cloudinary";
 
 const PORT = process.env.PORT || 4000;
 const baseUrl: string = "/api";
+
+// config cloude
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
+});
 
 // socket config
 const app = express();
@@ -56,7 +64,7 @@ app.use("/api/uploads", express.static(join(__dirname, "..", "uploads")));
 app.use(`${baseUrl}/auth`, AuthRouter);
 app.use(`${baseUrl}/users`, auth, userRouter);
 
-// caht service
+// chat service
 app.use(`${baseUrl}/chat`, auth, chatRouter);
 
 app.use(express.static(join(__dirname, "../client", "build")));

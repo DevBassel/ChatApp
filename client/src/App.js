@@ -9,7 +9,6 @@ import Messenger from "./pages/Messenger";
 import NotFound from "./pages/NotFound";
 
 function App() {
-
   return (
     <div className="App">
       <Routes>

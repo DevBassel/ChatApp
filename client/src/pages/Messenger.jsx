@@ -1,12 +1,11 @@
 import axios from "axios";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Msg from "../components/Msg";
 import avatar from "../images/avatar.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addError } from "../featchers/error/errorSlice";
-import { SocketContext } from "../context/SocketContext";
-import OnlineStatus from "../components/OnlineStatus";
+import Loading from "../components/Loading";
 
 export default function Messenger() {
   const { chatId } = useParams();
@@ -18,27 +17,21 @@ export default function Messenger() {
   const scrollDown = useRef(null);
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const { socket, activeUsers } = useContext(SocketContext);
   const [typeing, setTyping] = useState(false);
-  const online =
-    activeUsers.find((user) => user.userId === firendData._id) || false;
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("typeing", (data) => setTyping(data.status));
-      socket.on("stopTypeing", (data) => setTyping(data.status));
-    }
-  }, [socket]);
+  const [loading, setLoading] = useState(false);
+  const [checkImg, setcheckImg] = useState(404);
 
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const response = await axios.get(
           `${API}/chat/msg/${chatId.split("-")[0]}`,
           {
             withCredentials: true,
           }
         );
+        if (response) setLoading(false);
         setMsgs(response.data);
       } catch (error) {
         dispatch(addError(error.message));
@@ -65,65 +58,47 @@ export default function Messenger() {
   }, [API, chatId, dispatch, navigate]);
 
   useEffect(() => {
-    if (socket) {
-      socket.emit("addUser", user?._id);
-      socket.on("msg", (data) => {
-        setMsgs([...msgs, data]);
-      });
-    }
-    scrollDown.current?.scrollIntoView({ behavior: "smooth" });
-  }, [msgs, socket, user?._id]);
-
-  const sendMsg = async (e) => {
-    e.preventDefault();
-    if (msgContent.trim() !== "") {
+    (async () => {
       try {
-        const data = {
-          from: user._id,
-          to: firendData._id,
-          text: msgContent,
-        };
-        await axios.post(
-          `${API}/chat/msg`,
-          {
-            text: msgContent,
-            to: chatId.split("-")[1],
-            chatId: chatId.split("-")[0],
-          },
-          { withCredentials: true }
-        );
-        setMsgs([...msgs, data]);
-        socket?.emit("msg", data);
-        console.log({ data });
-        setContent("");
-        e.target.focus();
+        const res = await axios.get(firendData?.avatar);
+        setcheckImg(res.status);
       } catch (error) {
-        dispatch(addError(error.message));
-
-        console.log(error?.message);
+        setcheckImg(404);
       }
-    } else dispatch(addError("not valid msg"));
-  };
+    })();
+  }, [firendData?.avatar]);
 
-  const startTyping = ({ key }) => {
-    console.log(key);
-    if (key !== "Tab") {
-      socket.emit("typeing", {
-        userId: firendData._id,
-      });
+  async function sendMsg(e) {
+    e.preventDefault();
+    try {
+      const data = {
+        from: user._id,
+        to: firendData._id,
+        text: msgContent,
+      };
+      await axios.post(
+        `${API}/chat/msg`,
+        {
+          text: msgContent,
+          to: chatId.split("-")[1],
+          chatId: chatId.split("-")[0],
+        },
+        { withCredentials: true }
+      );
+      setMsgs([...msgs, data]);
+      // socket here
+      setContent("");
+      e.target.focus();
+    } catch (error) {
+      dispatch(addError(error.message));
+
+      console.log(error?.message);
     }
-  };
-  const stopTyping = ({ key }) => {
-    if (key !== "Tab") {
-      setTimeout(() => {
-        socket.emit("stopTypeing", {
-          userId: firendData._id,
-        });
-      }, 1500);
-    }
-  };
+  }
+
   return (
     <section className="bg-gradient-to-tr from-sky-500 to-indigo-500">
+      {loading ? <Loading /> : null}
       <div className="container   flex h-screen flex-col justify-between items-center m-auto rounded-md">
         {/* firend info container */}
         <div
@@ -142,7 +117,7 @@ export default function Messenger() {
 
             <img
               className="rounded-full object-cover w-12 h-12 "
-              src={firendData.avatar || avatar}
+              src={checkImg === 200 ? firendData.avatar : avatar}
               alt="reciverImg"
             />
           </div>
@@ -153,7 +128,7 @@ export default function Messenger() {
           </h1>
 
           {/* user status */}
-          <OnlineStatus online={online} />
+          {/* <OnlineStatus online={online} /> */}
         </div>
 
         {/* Masseages container */}
@@ -176,8 +151,8 @@ export default function Messenger() {
             type="text"
             value={msgContent}
             onChange={(e) => setContent(e.target.value)}
-            onKeyDown={startTyping}
-            onKeyUp={stopTyping}
+            // onKeyDown={startTyping}
+            // onKeyUp={stopTyping}
             aria-describedby="helper-text-explanation"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:outline-none block w-full p-2.5"
             placeholder="Enter Your Messag"

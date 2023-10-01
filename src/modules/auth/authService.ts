@@ -11,12 +11,6 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { v2 as cloudinary } from "cloudinary";
 
-cloudinary.config({
-  cloud_name: process.env.cloud_name,
-  api_key: process.env.api_key,
-  api_secret: process.env.api_secret,
-});
-
 const maxAge: number = 1000 * 60 * 60 * 24 * 30; // 30 day
 
 // /api/v1/register    |   POST    |   public
@@ -89,6 +83,23 @@ export const verifyEmail = asyncHandler(
       email: user.email,
       verify: user.verify,
     });
+  }
+);
+
+export const reSendValidEmail = asyncHandler(
+  async (req: customReq, res: Response, next: NextFunction) => {
+    const { id } = req.body;
+    const code: number = genCode();
+
+    const user = await User.findByIdAndUpdate(id, {
+      $set: { code },
+    });
+    if (!user) return next(CreateApiErr("User Not Found", 404));
+
+    if (user?.verify) return next(CreateApiErr("User Email Is Verify", 404));
+
+    sendCode(code, String(user?.email), res);
+    res.json({ success: true });
   }
 );
 
@@ -169,7 +180,7 @@ const sendCode = (code: number, email: string, res: Response): void => {
 
   res.cookie("email", email, {
     httpOnly: true,
-    maxAge: 1000 * 60 * 2,
+    maxAge: 1000 * 60 * 10,
   });
 };
 

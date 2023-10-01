@@ -4,7 +4,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { SocketContext } from "../context/SocketContext";
 import { logOut } from "../featchers/auth/authActions";
 
 export default function FirendsContainer() {
@@ -12,7 +11,6 @@ export default function FirendsContainer() {
   const [firends, setFirends] = useState([]);
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const { socket } = useContext(SocketContext);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,10 +40,10 @@ export default function FirendsContainer() {
           );
 
           const { sender, reciver } = res.data;
-          socket.emit("newChat", {
-            sender,
-            reciver,
-          });
+          // socket.emit("newChat", {
+          //   sender,
+          //   reciver,
+          // });
           // go to chat
           navigate(
             `messenger/${res.data._id}-${

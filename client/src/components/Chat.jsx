@@ -1,9 +1,8 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addError } from "../featchers/error/errorSlice";
 import { useNavigate } from "react-router-dom";
-import { SocketContext } from "../context/SocketContext";
 import OnlineStatus from "./OnlineStatus";
 import avatar from "../images/avatar.svg";
 
@@ -12,10 +11,11 @@ export default function Chat({ reciver, sender }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const { activeUsers } = useContext(SocketContext);
+  const [checkImg, setcheckImg] = useState(404);
+  // const { activeUsers } = useContext(SocketContext);
 
-  const online =
-    activeUsers.find((user) => user.userId === firendData._id) || false;
+  // const online =
+  //   activeUsers.find((user) => user.userId === firendData._id) || false;
 
   if (!user) {
     navigate("/login");
@@ -38,17 +38,29 @@ export default function Chat({ reciver, sender }) {
     getFirend();
   }, [dispatch, reciver, sender, user?._id]);
 
+  // const online = activeUsers.find((user) => user.userId === _id) || false;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axios.get(firendData?.avatar);
+        setcheckImg(res.status);
+      } catch (error) {
+        setcheckImg(404);
+      }
+    })();
+  }, [firendData?.avatar]);
   return (
     <>
       <img
         className="h-12 w-12 hover:scale-125 transition-all object-cover me-5 rounded-full"
-        src={firendData.avatar || avatar}
+        src={checkImg === 200 ? firendData.avatar : avatar}
         alt="firendPic"
       />
       <div>
         <p className=" text-xl text-gray-700 font-bold  ">{firendData.name}</p>
       </div>
-      <OnlineStatus online={online} />
+      {/* <OnlineStatus online={online} /> */}
     </>
   );
 }

@@ -1,5 +1,4 @@
 import multer from "multer";
-import { join } from "path";
 
 const storage: multer.StorageEngine = multer.diskStorage({
   filename(req, file, callback) {

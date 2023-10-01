@@ -1,27 +1,30 @@
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiShow, BiSolidHide } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../featchers/auth/authActions";
 import { addError } from "../featchers/error/errorSlice";
+import { authReset } from "../featchers/auth/authSlice";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, user } = useSelector((s) => s.auth);
+  const { error, user, success } = useSelector((s) => s.auth);
 
   const [userData, setData] = useState({
     email: "",
     password: "",
   });
 
-  if (user) {
-    if (!user.verify) navigate("/verify");
-    else {
-      navigate("/");
+  useEffect(() => {
+    if (user) {
+      if (!user?.verify) navigate("/verify");
+      else navigate("/");
     }
-  }
+
+    return () => dispatch(authReset());
+  }, [dispatch, navigate, user]);
 
   if (error) {
     dispatch(addError(error));
