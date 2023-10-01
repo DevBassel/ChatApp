@@ -70,7 +70,7 @@ export default function Messenger() {
     socket.on("typeing", (data) => setTyping(data.status));
     socket.on("stopTypeing", (data) => setTyping(data.status));
     socket.on("msg", (data) => setMsgs([...msgs, data]));
-    checkIfImage(firendData?.avatar, setcheckImg);
+    // checkIfImage(firendData?.avatar, setcheckImg);
 
     scrollDown.current?.scrollIntoView({ behavior: "smooth" });
   }, [firendData?.avatar, msgs, user?._id]);
@@ -141,7 +141,8 @@ export default function Messenger() {
 
             <img
               className="rounded-full object-cover w-12 h-12 "
-              src={checkImg ? firendData?.avatar : avatar}
+              // src={checkImg ? firendData?.avatar : avatar}
+              src={firendData?.avatar}
               alt="reciverImg"
             />
           </div>
