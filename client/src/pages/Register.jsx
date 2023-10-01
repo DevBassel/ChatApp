@@ -25,7 +25,7 @@ export default function Register() {
   // regex pattern
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordPattern =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   // set form data in state
   const getData = ({ target }) =>
@@ -65,7 +65,12 @@ export default function Register() {
         formData.append("password", userData.password);
 
         dispatch(register(formData));
-      } else dispatch(addError("Passwords do not match."));
+      } else
+        dispatch(
+          addError(
+            "Min 8 chars,  one uppercase letter, one lowercase letter, one number and one special character"
+          )
+        );
     } else {
       dispatch(addError("form not valid"));
     }

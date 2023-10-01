@@ -15,6 +15,6 @@ router.post("/reSendCode", authService_1.reSendValidEmail);
 router.post("/login", authService_1.login);
 router.post("/logout", authService_1.logout);
 router.post("/forget-password", passwordService_1.forgetPassword);
-router.route("/reset-password/:token").get(passwordService_1.resetPage).post(passwordService_1.passwordReset);
+router.route("/reset-password/:token").post(passwordService_1.passwordReset);
 exports.default = router;
 //# sourceMappingURL=authController.js.map

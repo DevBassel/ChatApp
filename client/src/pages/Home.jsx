@@ -26,10 +26,15 @@ export default function Home() {
     socket.connect();
     socket.emit("addUser", user?._id);
     socket.on("newChat", () => dispatch(getMyChats()));
+    socket.on("online", (users) => {
+      setActiveUsers(users);
+    });
+
+    return () => {
+      socket.off("newChat");
+    };
   }, [dispatch, user?._id]);
-  socket.on("online", (users) => {
-    setActiveUsers(users);
-  });
+
   return (
     <>
       <Navbar />

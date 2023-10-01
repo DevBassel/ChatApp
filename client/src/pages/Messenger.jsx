@@ -73,6 +73,13 @@ export default function Messenger() {
     // checkIfImage(firendData?.avatar, setcheckImg);
 
     scrollDown.current?.scrollIntoView({ behavior: "smooth" });
+
+    return () => {
+      socket.emit("addUser", user?._id);
+      socket.off("typeing");
+      socket.off("stopTypeing");
+      socket.off("msg");
+    };
   }, [firendData?.avatar, msgs, user?._id]);
   socket.on("online", (users) => {
     setActiveUsers(users);

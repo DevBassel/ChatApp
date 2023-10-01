@@ -6,11 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../featchers/auth/authActions";
 import { addError } from "../featchers/error/errorSlice";
 import { authReset } from "../featchers/auth/authSlice";
+import Swal from "sweetalert2";
+import axios from "axios";
+import Loading from "../components/Loading";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, user } = useSelector((s) => s.auth);
+  const { error, user, loading } = useSelector((s) => s.auth);
 
   const [userData, setData] = useState({
     email: "",
@@ -57,8 +60,45 @@ export default function Login() {
     }
   }
 
+  const sendReset = () => {
+    Swal.fire({
+      title: "Reset Your Password ^_^",
+      input: "email",
+      inputLabel: "Enter Your Email",
+      showCancelButton: true,
+      inputValidator: (val) => {
+        if (!emailPattern.test(val)) return "Enter Valid Email";
+      },
+    }).then(async (r) => {
+      if (r.isConfirmed) {
+        try {
+          const res = await axios.post(
+            "/api/auth/forget-password",
+            {
+              email: r.value,
+            },
+            { withCredentials: true }
+          );
+          if (res.data.success) {
+            Swal.fire({
+              title: "Check Your Email",
+              icon: "success",
+              iconColor: "#4f46e5",
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: error.response.data.error,
+            icon: "error",
+          });
+        }
+      }
+    });
+  };
+
   return (
     <>
+      {loading && <Loading />}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 capitalize text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -97,12 +137,12 @@ export default function Login() {
               </button>
             </div>
             <div className="text-sm flex capitalize justify-between">
-              <a
-                href="#s"
+              <Link
+                onClick={sendReset}
                 className=" font-bold text-indigo-600 hover:text-indigo-500"
               >
                 Forgot password?
-              </a>
+              </Link>
               <Link
                 to="/register"
                 className=" font-bold text-indigo-600 hover:text-indigo-500"

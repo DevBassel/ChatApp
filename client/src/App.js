@@ -7,6 +7,7 @@ import Popup from "./components/Popup";
 import Profile from "./pages/Profile";
 import Messenger from "./pages/Messenger";
 import NotFound from "./pages/NotFound";
+import ReSetPass from "./pages/ReSetPass";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password/:token" element={<ReSetPass />} />
         <Route path="/verify" element={<Verify />} />
 
         <Route path="*" element={<NotFound />} />

@@ -6,9 +6,8 @@ import {
   logout,
   reSendValidEmail,
 } from "./authService";
-import { forgetPassword, passwordReset, resetPage } from "./passwordService";
+import { forgetPassword, passwordReset } from "./passwordService";
 import upload from "../middlewares/upload";
-import authMiddelware from "./authMiddelware";
 
 // /api/v1/auth
 
@@ -26,6 +25,6 @@ router.post("/logout", logout);
 
 router.post("/forget-password", forgetPassword);
 
-router.route("/reset-password/:token").get(resetPage).post(passwordReset);
+router.route("/reset-password/:token").post(passwordReset);
 
 export default router;
