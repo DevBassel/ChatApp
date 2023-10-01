@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Loading from "./Loading";
 
-export default function ChatsContainer({ chats, loading }) {
+export default function ChatsContainer({ chats, loading, activeUsers }) {
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
 
   return (
     <section className="container m-auto p-4  rounded-md bg-slate-300">
-      {loading? <Loading/> : ""}
+      {loading ? <Loading /> : ""}
       <h3 className=" font-bold -mt-4 p-1 tracking-wide">my chats</h3>
       <div className="grid w-full lg:grid-cols-3 item-center md:grid-cols-2 sm:grid-cols-2">
         {chats ? (
@@ -26,7 +26,7 @@ export default function ChatsContainer({ chats, loading }) {
                 )
               }
             >
-              <Chat {...item} />
+              <Chat {...{ ...item, activeUsers }} />
             </div>
           ))
         ) : (

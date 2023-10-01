@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../featchers/auth/authActions";
 
-export default function FirendsContainer() {
+export default function FirendsContainer({ onlines }) {
   const API = "/api";
   const [firends, setFirends] = useState([]);
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ export default function FirendsContainer() {
       }
     })();
   }, [API, dispatch]);
-
   const startChat = ({ name, _id }) => {
     Swal.fire({
       title: `You Will Start Chat with ${name}`,
@@ -70,7 +69,7 @@ export default function FirendsContainer() {
             className="border cursor-pointer relative overflow-hidden border-slate-700 w-20 h-20 flex-1 me-2 inline-block rounded-lg"
             onClick={() => startChat(firend)}
           >
-            <Firend {...firend} />
+            <Firend {...{ ...firend, onlines }} />
           </div>
         ))}
     </section>

@@ -12,10 +12,9 @@ import {
 } from "react-icons/bi";
 import axios from "axios";
 import { addError } from "../featchers/error/errorSlice";
+import socket from "../socket";
 
 export default function Navbar() {
-  // const { socket } = useContext(SocketContext);
-
   const [show, setshow] = useState(false);
   const showMenu = () => setshow(true);
   const dispatch = useDispatch();
@@ -61,6 +60,7 @@ export default function Navbar() {
       name: "log out",
       icone: <BiLogOut />,
       fun: () => {
+        socket.disconnect();
         dispatch(logOut());
       },
     },

@@ -10,7 +10,7 @@ import { authReset } from "../featchers/auth/authSlice";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, user, success } = useSelector((s) => s.auth);
+  const { error, user } = useSelector((s) => s.auth);
 
   const [userData, setData] = useState({
     email: "",
@@ -26,9 +26,11 @@ export default function Login() {
     return () => dispatch(authReset());
   }, [dispatch, navigate, user]);
 
-  if (error) {
-    dispatch(addError(error));
-  }
+  useEffect(() => {
+    if (error) {
+      dispatch(addError(error));
+    }
+  });
 
   const [showPass, setShowPass] = useState(false);
   // regex pattern

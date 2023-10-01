@@ -32,24 +32,21 @@ export default function Register() {
     setData({ ...userData, [target.name]: target.value });
 
   useEffect(() => {
-    if (success) {
-      navigate("/verify");
-    }
-    if (error) {
-      if (error.includes("name_1 dup")) dispatch(addError("userName is used"));
-      if (error.includes("email_1 dup")) dispatch(addError("email is used"));
+    if (user) {
+      if (!user?.verify) navigate("/verify");
     }
 
     return () => dispatch(authReset());
-  }, [dispatch, error, navigate, success, user]);
+  }, [dispatch, navigate, user]);
+
+  if (error) {
+    if (error.includes("name_1 dup")) dispatch(addError("userName is used"));
+    if (error.includes("email_1 dup")) dispatch(addError("email is used"));
+  }
 
   const fileChange = (e) => {
     setAvatar(e.target.files[0]);
   };
-
-  if (success) {
-    dispatch(getMe());
-  }
 
   // submit form
   function submit(event) {

@@ -21,6 +21,8 @@ export default function Verify() {
     if (!user) navigate("/login");
 
     if (user?.verify) navigate("/");
+
+    
     if (error) dispatch(addError(error));
   }, [dispatch, error, navigate, user]);
 

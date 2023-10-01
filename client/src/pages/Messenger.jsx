@@ -6,6 +6,8 @@ import avatar from "../images/avatar.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addError } from "../featchers/error/errorSlice";
 import Loading from "../components/Loading";
+import socket from "../socket";
+import OnlineStatus from "../components/OnlineStatus";
 
 export default function Messenger() {
   const { chatId } = useParams();
@@ -20,6 +22,10 @@ export default function Messenger() {
   const [typeing, setTyping] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkImg, setcheckImg] = useState(404);
+
+  const [activeUsers, setActiveUsers] = useState([]);
+  const onlins =
+    activeUsers.find((user) => user.userId === firendData._id) || false;
 
   useEffect(() => {
     (async () => {
@@ -58,6 +64,19 @@ export default function Messenger() {
   }, [API, chatId, dispatch, navigate]);
 
   useEffect(() => {
+    socket.connect();
+    socket.emit("addUser", user?._id);
+    socket.on("typeing", (data) => setTyping(data.status));
+    socket.on("stopTypeing", (data) => setTyping(data.status));
+    socket.on("msg", (data) => setMsgs([...msgs, data]));
+
+    scrollDown.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs, user?._id]);
+  socket.on("online", (users) => {
+    setActiveUsers(users);
+  });
+  // check image in cloud
+  useEffect(() => {
     (async () => {
       try {
         const res = await axios.get(firendData?.avatar);
@@ -87,6 +106,8 @@ export default function Messenger() {
       );
       setMsgs([...msgs, data]);
       // socket here
+      socket.emit("msg", data);
+      setMsgs([...msgs, data]);
       setContent("");
       e.target.focus();
     } catch (error) {
@@ -95,6 +116,18 @@ export default function Messenger() {
       console.log(error?.message);
     }
   }
+
+  const startTyping = ({ keyCode }) => {
+    if (keyCode !== 9) {
+      socket.emit("typeing", { userId: firendData?._id });
+    }
+  };
+
+  const stopTyping = () => {
+    setTimeout(() => {
+      socket.emit("stopTypeing", { userId: firendData?._id });
+    }, 1700);
+  };
 
   return (
     <section className="bg-gradient-to-tr from-sky-500 to-indigo-500">
@@ -128,7 +161,7 @@ export default function Messenger() {
           </h1>
 
           {/* user status */}
-          {/* <OnlineStatus online={online} /> */}
+          <OnlineStatus online={onlins} />
         </div>
 
         {/* Masseages container */}
@@ -151,8 +184,8 @@ export default function Messenger() {
             type="text"
             value={msgContent}
             onChange={(e) => setContent(e.target.value)}
-            // onKeyDown={startTyping}
-            // onKeyUp={stopTyping}
+            onKeyDown={startTyping}
+            onKeyUp={stopTyping}
             aria-describedby="helper-text-explanation"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:outline-none block w-full p-2.5"
             placeholder="Enter Your Messag"

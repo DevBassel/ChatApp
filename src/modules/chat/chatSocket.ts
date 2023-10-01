@@ -11,7 +11,7 @@ export default function chatSocket(io: Server) {
     socket.on("addUser", (userId) => {
       userId && addUser({ userId, socketId: socket.id });
       io.emit("online", users);
-      console.log("add user", { users });
+      // console.log("add user", { users });
     });
 
     socket.on("msg", (data) => {
@@ -19,17 +19,18 @@ export default function chatSocket(io: Server) {
       // console.log(data);
       io.to(String(user)).emit("msg", data);
 
-      // console.log({ users, user, data });
+      // console.log({ user, data });
     });
 
     socket.on("typeing", (data) => {
       const user = getUser(data.userId)?.socketId;
-
       io.to(String(user)).emit("typeing", { status: true });
     });
 
     socket.on("stopTypeing", (data) => {
       const user = getUser(data.userId)?.socketId;
+      // console.log("st", user);
+
       io.to(String(user)).emit("stopTypeing", { status: false });
     });
 
@@ -41,8 +42,8 @@ export default function chatSocket(io: Server) {
     socket.on("disconnect", () => {
       removeUser(socket.id);
       io.emit("online", users);
+      console.log("disconnect");
     });
-    console.log("disconnect");
   });
 }
 

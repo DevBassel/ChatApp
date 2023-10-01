@@ -6,16 +6,15 @@ import { useNavigate } from "react-router-dom";
 import OnlineStatus from "./OnlineStatus";
 import avatar from "../images/avatar.svg";
 
-export default function Chat({ reciver, sender }) {
+export default function Chat({ reciver, sender, activeUsers }) {
   const [firendData, setFirendData] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
   const [checkImg, setcheckImg] = useState(404);
-  // const { activeUsers } = useContext(SocketContext);
 
-  // const online =
-  //   activeUsers.find((user) => user.userId === firendData._id) || false;
+  const online =
+    activeUsers.find((user) => user.userId === firendData._id) || false;
 
   if (!user) {
     navigate("/login");
@@ -38,8 +37,6 @@ export default function Chat({ reciver, sender }) {
     getFirend();
   }, [dispatch, reciver, sender, user?._id]);
 
-  // const online = activeUsers.find((user) => user.userId === _id) || false;
-
   useEffect(() => {
     (async () => {
       try {
@@ -50,6 +47,7 @@ export default function Chat({ reciver, sender }) {
       }
     })();
   }, [firendData?.avatar]);
+
   return (
     <>
       <img
@@ -60,7 +58,7 @@ export default function Chat({ reciver, sender }) {
       <div>
         <p className=" text-xl text-gray-700 font-bold  ">{firendData.name}</p>
       </div>
-      {/* <OnlineStatus online={online} /> */}
+      <OnlineStatus online={online} />
     </>
   );
 }

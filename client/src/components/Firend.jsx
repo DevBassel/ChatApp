@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import avatarXD from "../images/avatar.svg";
 import axios from "axios";
+import OnlineStatus from "./OnlineStatus";
 
-export default function Firend({ name, avatar, _id }) {
+export default function Firend({ name, avatar, _id, onlines }) {
   const [checkImg, setcheckImg] = useState(404);
 
-  // const online = activeUsers.find((user) => user.userId === _id) || false;
+  const activeUsers = onlines.find((user) => user.userId === _id) || false;
 
   useEffect(() => {
     (async () => {
@@ -19,7 +20,7 @@ export default function Firend({ name, avatar, _id }) {
   }, [avatar]);
   return (
     <>
-      {/* <OnlineStatus online={online} /> */}
+      <OnlineStatus online={activeUsers} />
       <img
         className="w-full h-full object-cover hover:scale-125 hover:rotate-12 transition"
         src={checkImg === 200 ? avatar : avatarXD}
