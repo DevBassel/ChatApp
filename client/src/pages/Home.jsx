@@ -25,7 +25,8 @@ export default function Home() {
   useEffect(() => {
     socket.connect();
     socket.emit("addUser", user?._id);
-  }, [user?._id]);
+    socket.on("newChat", () => dispatch(getMyChats()));
+  }, [dispatch, user?._id]);
   socket.on("online", (users) => {
     setActiveUsers(users);
   });

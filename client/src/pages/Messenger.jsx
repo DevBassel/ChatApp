@@ -8,6 +8,7 @@ import { addError } from "../featchers/error/errorSlice";
 import Loading from "../components/Loading";
 import socket from "../socket";
 import OnlineStatus from "../components/OnlineStatus";
+import checkIfImage from "../helper/checkIfImg";
 
 export default function Messenger() {
   const { chatId } = useParams();
@@ -21,7 +22,7 @@ export default function Messenger() {
   const { user } = useSelector((s) => s.auth);
   const [typeing, setTyping] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [checkImg, setcheckImg] = useState(404);
+  const [checkImg, setcheckImg] = useState(false);
 
   const [activeUsers, setActiveUsers] = useState([]);
   const onlins =
@@ -69,23 +70,13 @@ export default function Messenger() {
     socket.on("typeing", (data) => setTyping(data.status));
     socket.on("stopTypeing", (data) => setTyping(data.status));
     socket.on("msg", (data) => setMsgs([...msgs, data]));
+    checkIfImage(firendData?.avatar, setcheckImg);
 
     scrollDown.current?.scrollIntoView({ behavior: "smooth" });
-  }, [msgs, user?._id]);
+  }, [firendData?.avatar, msgs, user?._id]);
   socket.on("online", (users) => {
     setActiveUsers(users);
   });
-  // check image in cloud
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get(firendData?.avatar);
-        setcheckImg(res.status);
-      } catch (error) {
-        setcheckImg(404);
-      }
-    })();
-  }, [firendData?.avatar]);
 
   async function sendMsg(e) {
     e.preventDefault();
@@ -150,7 +141,7 @@ export default function Messenger() {
 
             <img
               className="rounded-full object-cover w-12 h-12 "
-              src={checkImg === 200 ? firendData.avatar : avatar}
+              src={checkImg ? firendData?.avatar : avatar}
               alt="reciverImg"
             />
           </div>

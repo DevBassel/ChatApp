@@ -5,13 +5,14 @@ import { addError } from "../featchers/error/errorSlice";
 import { useNavigate } from "react-router-dom";
 import OnlineStatus from "./OnlineStatus";
 import avatar from "../images/avatar.svg";
+import checkIfImage from "../helper/checkIfImg";
 
 export default function Chat({ reciver, sender, activeUsers }) {
   const [firendData, setFirendData] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const [checkImg, setcheckImg] = useState(404);
+  const [checkImg, setcheckImg] = useState(false);
 
   const online =
     activeUsers.find((user) => user.userId === firendData._id) || false;
@@ -19,7 +20,10 @@ export default function Chat({ reciver, sender, activeUsers }) {
   if (!user) {
     navigate("/login");
   }
-
+  useEffect(() => {
+    checkIfImage(user?.avatar, setcheckImg);
+  }, [user?.avatar]);
+  
   useEffect(() => {
     const getFirend = async () => {
       try {
@@ -37,22 +41,11 @@ export default function Chat({ reciver, sender, activeUsers }) {
     getFirend();
   }, [dispatch, reciver, sender, user?._id]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get(firendData?.avatar);
-        setcheckImg(res.status);
-      } catch (error) {
-        setcheckImg(404);
-      }
-    })();
-  }, [firendData?.avatar]);
-
   return (
     <>
       <img
         className="h-12 w-12 hover:scale-125 transition-all object-cover me-5 rounded-full"
-        src={checkImg === 200 ? firendData.avatar : avatar}
+        src={checkImg ? firendData.avatar : avatar}
         alt="firendPic"
       />
       <div>

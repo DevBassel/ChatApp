@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Firend from "./Firend";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../featchers/auth/authActions";
+import socket from "../socket";
 
 export default function FirendsContainer({ onlines }) {
   const API = "/api";
@@ -39,10 +40,10 @@ export default function FirendsContainer({ onlines }) {
           );
 
           const { sender, reciver } = res.data;
-          // socket.emit("newChat", {
-          //   sender,
-          //   reciver,
-          // });
+          socket.emit("newChat", {
+            sender,
+            reciver,
+          });
           // go to chat
           navigate(
             `messenger/${res.data._id}-${
