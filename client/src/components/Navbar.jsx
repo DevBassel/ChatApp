@@ -10,7 +10,6 @@ import {
   BiSolidUser,
   BiUser,
 } from "react-icons/bi";
-import axios from "axios";
 import { addError } from "../featchers/error/errorSlice";
 import socket from "../socket";
 
@@ -20,7 +19,6 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, error } = useSelector((s) => s.auth);
-  const [checkImg, setcheckImg] = useState(404);
 
   useEffect(() => {
     if (error) {
@@ -36,13 +34,6 @@ export default function Navbar() {
 
   useEffect(() => {
     dispatch(getMe());
-
-    axios
-      .get(user?.avatar)
-      .then((res) => setcheckImg(res.status))
-      .catch((err) => setcheckImg(404));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   const navList = [
@@ -82,7 +73,7 @@ export default function Navbar() {
             <img
               className="w-12 h-12 rounded-full object-cover"
               onMouseOut={() => setshow(false)}
-              src={checkImg === 200 ? user?.avatar : avatar}
+              src={user?.avatar}
               alt="userPhoto"
             />
             <div
